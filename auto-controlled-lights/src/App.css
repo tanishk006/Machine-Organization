@@ -14,29 +14,115 @@
   position: absolute;
   top: 20px;
   left: 24px;
-  display: grid;
-  gap: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   color: #f7f3e8;
   font: 12px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
   letter-spacing: 0;
   text-align: left;
   text-shadow: 0 1px 8px rgb(0 0 0 / 60%);
   pointer-events: none;
+  background: rgb(15 20 26 / 52%);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 12px;
+  padding: 10px 12px;
+  min-width: 180px;
 }
 
 .scene-overlay strong {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .scene-overlay span {
-  color: rgb(247 243 232 / 72%);
+  color: rgb(247 243 232 / 74%);
+}
+
+.hud-metrics {
+  margin-top: 2px;
+  color: rgb(199 233 255 / 96%);
+  font-weight: 600;
+}
+
+.hud-legend {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 4px;
+  color: rgb(247 243 232 / 78%);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.legend-swatch.player {
+  background: #7ab5ff;
+  box-shadow: 0 0 10px rgb(122 181 255 / 80%);
+}
+
+.legend-swatch.npc {
+  background: #74d594;
+  box-shadow: 0 0 10px rgb(116 213 148 / 80%);
+}
+
+.scene-switcher {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.scene-button {
+  padding: 9px 14px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 999px;
+  background: rgb(15 20 26 / 64%);
+  color: #f4f2eb;
+  font: 12px/1.2 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 22px rgb(0 0 0 / 16%);
+}
+
+.scene-button:hover {
+  transform: translateY(-1px);
+  border-color: rgb(255 255 255 / 40%);
+}
+
+.scene-button.active {
+  background: linear-gradient(135deg, rgb(115 173 255 / 38%), rgb(72 145 255 / 28%));
+  border-color: rgb(160 204 255 / 90%);
+  box-shadow: 0 0 0 2px rgb(160 204 255 / 26%), 0 8px 22px rgb(0 0 0 / 22%);
+  font-weight: 700;
 }
 
 @media (max-width: 600px) {
   .scene-overlay {
     top: 14px;
     left: 16px;
+    min-width: 160px;
+  }
+
+  .scene-switcher {
+    right: 14px;
+    bottom: 14px;
+    left: 14px;
+    justify-content: flex-start;
   }
 }
 .counter {

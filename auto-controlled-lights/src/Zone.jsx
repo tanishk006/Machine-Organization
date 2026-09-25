@@ -19,16 +19,26 @@ export default function Zone({
   floorColor = '#c9c2b2',
   lightColor = '#fff2d0',
   lightIntensity = 2.5,
-  idleIntensity = 0.05, // dim glow when empty, avoids a jarring hard cut to black
-  occupants = [], // array of refs, e.g. [playerRef] or [npc1Ref, npc2Ref, ...]
-  radius, // detection radius; defaults from footprint size if omitted
+  idleIntensity = 0.02,
+  occupants = [],
+  radius,
+  zoneStore = 'zones',
 }) {
   const groupRef = useRef();
   const lightRef = useRef();
+  const bulbRef = useRef();
   const currentIntensity = useRef(idleIntensity);
 
-  const registerZone = useZoneStore((s) => s.registerZone);
-  const setOccupied = useZoneStore((s) => s.setOccupied);
+  const registerZone = useZoneStore((s) => {
+    if (zoneStore === 'officeComplexZones') return s.registerOfficeComplexZone;
+    if (zoneStore === 'storageFacilityZones') return s.registerStorageFacilityZone;
+    return s.registerZone;
+  });
+  const setOccupied = useZoneStore((s) => {
+    if (zoneStore === 'officeComplexZones') return s.setOfficeComplexOccupied;
+    if (zoneStore === 'storageFacilityZones') return s.setStorageFacilityOccupied;
+    return s.setOccupied;
+  });
 
   const [w, h, d] = size;
   const detectRadius = radius ?? Math.sqrt(w * w + d * d) / 2 + 0.5;
@@ -58,7 +68,6 @@ export default function Zone({
     setOccupied(id, isOccupied);
 
     const target = isOccupied ? lightIntensity : idleIntensity;
-    // Framerate-independent smoothing so it never feels like a light switch
     const t = 1 - Math.pow(0.001, delta);
     currentIntensity.current = THREE.MathUtils.lerp(
       currentIntensity.current,
@@ -69,17 +78,20 @@ export default function Zone({
     if (lightRef.current) {
       lightRef.current.intensity = currentIntensity.current;
     }
+
+    if (bulbRef.current) {
+      const brightness = 0.55 + currentIntensity.current * 2.2;
+      bulbRef.current.scale.setScalar(Math.max(0.5, brightness));
+    }
   });
 
   return (
     <group ref={groupRef} position={position}>
-      {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[w, d]} />
         <meshStandardMaterial color={floorColor} />
       </mesh>
 
-      {/* Back + side walls (front left open so the camera can see in) */}
       <mesh position={[0, h / 2, -d / 2]} receiveShadow>
         <boxGeometry args={[w, h, 0.15]} />
         <meshStandardMaterial color={wallColor} />
@@ -93,22 +105,31 @@ export default function Zone({
         <meshStandardMaterial color={wallColor} />
       </mesh>
 
-      {/* Ceiling fixture (visual anchor for the light) */}
-      <mesh position={[0, h - 0.1, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.05, 16]} />
+      <mesh position={[0, h - 0.12, 0]} castShadow>
+        <cylinderGeometry args={[0.18, 0.18, 0.08, 18]} />
+        <meshStandardMaterial
+          color="#faf7f0"
+          emissive={lightColor}
+          emissiveIntensity={0.8}
+        />
+      </mesh>
+      <mesh ref={bulbRef} position={[0, h - 0.3, 0]} castShadow>
+        <sphereGeometry args={[0.13, 18, 18]} />
         <meshStandardMaterial
           color={lightColor}
           emissive={lightColor}
-          emissiveIntensity={1}
+          emissiveIntensity={1.6}
+          metalness={0.2}
+          roughness={0.2}
         />
       </mesh>
 
       <pointLight
         ref={lightRef}
-        position={[0, h - 0.3, 0]}
+        position={[0, h - 0.4, 0]}
         color={lightColor}
         intensity={idleIntensity}
-        distance={Math.max(w, d) * 1.5}
+        distance={Math.max(w, d) * 1.9}
         decay={2}
         castShadow
       />

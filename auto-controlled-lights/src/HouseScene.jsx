@@ -21,11 +21,6 @@ class SceneErrorBoundary extends Component {
   }
 }
 
-/**
- * House demo: proximity-based motion detection.
- * Walk the avatar (WASD/arrows) between rooms and watch each light
- * fade up as you approach and dim back down as you leave.
- */
 export default function HouseScene() {
   const playerRef = useRef();
   const occupants = [playerRef];
@@ -33,17 +28,24 @@ export default function HouseScene() {
   return (
     <Canvas
       shadows
-      camera={{ position: [-1, 5.5, 10], fov: 50 }}
+      camera={{ position: [0, 6.2, 9.5], fov: 34 }}
       gl={{ toneMapping: THREE.ACESFilmicToneMapping }}
       onCreated={({ gl }) => {
         gl.outputColorSpace = THREE.SRGBColorSpace;
       }}
     >
-      <ambientLight intensity={0.15} />
+      <color attach="background" args={['#171d22']} />
+      <ambientLight intensity={0.18} />
       <hemisphereLight
         skyColor="#dfe9f3"
-        groundColor="#3a3a3a"
-        intensity={0.3}
+        groundColor="#2a2a2a"
+        intensity={0.38}
+      />
+      <directionalLight
+        position={[6, 9, 5]}
+        intensity={0.45}
+        color="#f5f0e8"
+        castShadow
       />
 
       <SceneErrorBoundary>
@@ -58,6 +60,7 @@ export default function HouseScene() {
         lightColor="#ffdca8"
         occupants={occupants}
         radius={2.1}
+        idleIntensity={0.015}
       />
       <SectorLight
         id="kitchen"
@@ -65,6 +68,7 @@ export default function HouseScene() {
         lightColor="#fff6d8"
         occupants={occupants}
         radius={1.8}
+        idleIntensity={0.015}
       />
       <SectorLight
         id="bedroom"
@@ -72,6 +76,7 @@ export default function HouseScene() {
         lightColor="#ffe9c7"
         occupants={occupants}
         radius={1.8}
+        idleIntensity={0.015}
       />
 
       <Suspense fallback={null}>
@@ -79,9 +84,10 @@ export default function HouseScene() {
       </Suspense>
 
       <OrbitControls
+        target={[0, 1.2, 0]}
         maxPolarAngle={Math.PI / 2.1}
         minDistance={5}
-        maxDistance={25}
+        maxDistance={18}
       />
     </Canvas>
   );
