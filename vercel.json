@@ -3,7 +3,7 @@
   "buildCommand": "cd auto-controlled-lights && npm run build",
   "installCommand": "cd auto-controlled-lights && npm install",
   "outputDirectory": "auto-controlled-lights/dist",
-  "framework": "vite",
+  "framework": null,
   "rewrites": [
     {
       "source": "/(.*)",
